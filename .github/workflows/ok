@@ -1,1 +1,57 @@
+name: Render video
+
+on:
+  workflow_dispatch:
+    inputs:
+      footer:
+        description: "Teks footer / handle channel"
+        required: false
+        default: "@YourChannel"
+      fps:
+        description: "FPS (60 = sama dengan video asli)"
+        required: false
+        default: "60"
+      backend:
+        description: "puppeteer (Chrome) atau canvas (tanpa browser, lebih cepat)"
+        type: choice
+        options: [puppeteer, canvas]
+        default: puppeteer
+  push:
+    tags: ["v*"]
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      FOOTER: ${{ github.event.inputs.footer || '@YourChannel' }}
+      FPS: ${{ github.event.inputs.fps || '60' }}
+      BACKEND: ${{ github.event.inputs.backend || 'puppeteer' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install ffmpeg + font serif (Liberation = metrik Times New Roman)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-liberation fonts-dejavu-core
+          fc-cache -f
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Render (audio + video)
+        run: node render.js --backend="$BACKEND" --fps="$FPS"
+
+      - name: Upload hasil
+        uses: actions/upload-artifact@v4
+        with:
+          name: flag-sound-video
+          path: |
+            out/flags-sound.mp4
+            out/audio.wav
+          retention-days: 14
 
