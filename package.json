@@ -1,0 +1,24 @@
+{
+  "name": "flag-sound-video",
+  "version": "1.0.0",
+  "description": "If Historical Flags Had Sound - generator video 9:16 (visual canvas + audio dari kontur bendera), render via Puppeteer + ffmpeg",
+  "private": true,
+  "main": "render.js",
+  "scripts": {
+    "preview": "npx --yes serve . -l 5173",
+    "audio": "node scripts/audio-test.js",
+    "still": "node scripts/still.js 1 4.1 9.1 15.1 22.1 30.2",
+    "render": "node render.js",
+    "render:canvas": "node render.js --backend=canvas",
+    "render:test": "node render.js --backend=canvas --seconds=6 --fps=30 --out=out/test.mp4"
+  },
+  "dependencies": {
+    "puppeteer": "^24.0.0"
+  },
+  "optionalDependencies": {
+    "@napi-rs/canvas": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
